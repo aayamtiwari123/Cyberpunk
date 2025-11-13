@@ -380,8 +380,8 @@ export const categories: Category[] = [
       {
         id: 'r4',
         name: 'Digital / Tech Symbiosis',
-        reading: 'Programming, AI basics',
-        mastery: 'Predict and simulate digital or technical systems mentally',
+        reading: 'Tech-human interaction, digital trends, user psychology, UX/UI principles, social media dynamics, AI impact on society',
+        mastery: 'Understand and predict how humans interact with technology; anticipate digital trends and behavioral shifts',
         position: { x: 680, y: 480 },
         requires: ['r2']
       },
