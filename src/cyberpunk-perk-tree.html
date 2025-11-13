@@ -1049,10 +1049,10 @@
 
           {showTooltip && !showMenu && (
             <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
               className="absolute bg-gray-900-95 border border-cyan-500-50 rounded p-2 w-64 z-50 backdrop-blur-sm pointer-events-auto"
-              style={{ top: '50%', transform: 'translateY(-50%)', right: '100%', marginRight: '0.75rem', zIndex: 1001 }}
+              style={{ bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: '0.75rem', zIndex: 1001 }}
             >
               <div className={`text-xs ${unlocked ? (locked ? 'text-yellow-400' : 'text-cyan-400') : 'text-cyan-400'}`}>
                 {name}
