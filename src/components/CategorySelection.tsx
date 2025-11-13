@@ -85,13 +85,7 @@ export function CategorySelection({ categories, onSelectCategory, characterLevel
         })}
       </div>
 
-      {/* Title */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-center z-10">
-        <h1 className="text-cyan-400 tracking-widest mb-2" style={{ textShadow: '0 0 20px rgba(6, 182, 212, 0.5)' }}>
-          ATTRIBUTE MATRIX
-        </h1>
-        <p className="text-gray-500 text-sm">Select an attribute to view skill tree</p>
-      </div>
+      {/* Title removed as requested */}
     </div>
   );
 }
