@@ -17,6 +17,23 @@ function copyRecursive(src, dest) {
 }
 
 try {
+  console.log('Preparing dev index for build...');
+  const repoRoot = path.join(__dirname, '..');
+  const devIndex = path.join(repoRoot, 'index.dev.html');
+  const rootIndex = path.join(repoRoot, 'index.html');
+
+  // If a dev index exists, use it for building by copying to index.html
+  let restoredAfter = false;
+  if (fs.existsSync(devIndex)) {
+    console.log('Using index.dev.html for build. Backing up current index.html if present.');
+    // Backup existing index.html if it exists
+    if (fs.existsSync(rootIndex)) {
+      fs.copyFileSync(rootIndex, path.join(repoRoot, 'index.backup.html'));
+      restoredAfter = true;
+    }
+    fs.copyFileSync(devIndex, rootIndex);
+  }
+
   console.log('Running build...');
   execSync('npm run build', { stdio: 'inherit' });
 
@@ -41,8 +58,15 @@ try {
 
   console.log('Pushing to origin...');
   execSync('git push', { stdio: 'inherit' });
-
   console.log('Deployment complete.');
+
+  // If we backed up a previous index.html, remove the backup (we replaced root index with build). Keep index.dev.html as source for future builds.
+  try {
+    const backup = path.join(repoRoot, 'index.backup.html');
+    if (fs.existsSync(backup)) fs.unlinkSync(backup);
+  } catch (e) {
+    // ignore
+  }
 } catch (err) {
   console.error('Deploy failed:', err.message || err);
   process.exit(1);
