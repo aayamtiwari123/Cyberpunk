@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { Lock, Check, BookOpen, LockKeyhole } from 'lucide-react';
 import { useState } from 'react';
+import { perkMastery } from '../data/perkMastery';
 
 interface DetailedPerkNodeProps {
   id: string;
@@ -17,6 +18,7 @@ interface DetailedPerkNodeProps {
 }
 
 export function DetailedPerkNode({
+  id,
   name,
   reading,
   mastery,
@@ -27,9 +29,12 @@ export function DetailedPerkNode({
   onClick,
   onLockToggle,
   side = 'right'
-}: DetailedPerkNodeProps) {
+}: DetailedPerkNodeProps & { id: string }) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+
+  const detailInfo = perkMastery[id];
 
   const handleClick = (e: React.MouseEvent) => {
     if (unlocked) {
@@ -37,6 +42,11 @@ export function DetailedPerkNode({
     } else if (available) {
       onClick();
     }
+  };
+
+  const handleContext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowDetails(true);
   };
 
   const handleUnlock = () => {
@@ -62,6 +72,7 @@ export function DetailedPerkNode({
       whileHover={{ scale: (available || unlocked) ? 1.1 : 1 }}
       whileTap={{ scale: (available || unlocked) ? 0.95 : 1 }}
       onClick={handleClick}
+        onContextMenu={handleContext}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
     >
@@ -200,6 +211,33 @@ export function DetailedPerkNode({
             </div>
           )}
         </motion.div>
+      )}
+
+      {/* Details Modal (right-click) */}
+      {showDetails && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setShowDetails(false)} />
+          <div className="relative bg-gray-900/95 border border-cyan-500/40 rounded-lg p-4 max-w-lg w-[min(90%,560px)] z-70">
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <div className="text-cyan-400 font-medium">{name}</div>
+                <div className="text-xs text-gray-300">{reading}</div>
+              </div>
+              <button className="text-gray-300 text-xs px-2" onClick={() => setShowDetails(false)}>Close</button>
+            </div>
+
+            <div className="text-sm text-gray-200 mb-2">{mastery}</div>
+
+            {detailInfo ? (
+              <div className="text-sm text-gray-300">
+                <div><strong>Estimated Hours:</strong> {detailInfo.hours}</div>
+                <div className="mt-2"><strong>What you should be able to do:</strong> {detailInfo.outcomes}</div>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-400">No mastery estimate available for this perk.</div>
+            )}
+          </div>
+        </div>
       )}
     </motion.div>
   );
