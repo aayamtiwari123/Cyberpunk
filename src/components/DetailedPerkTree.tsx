@@ -107,22 +107,47 @@ export function DetailedPerkTree({ category, onBack, initialUnlockedPerks, onPer
       p.requires?.includes(perkId)
     );
   };
+  // Find all unlocked perks that (directly or indirectly) depend on the given perk
+  const findDependentUnlockedPerks = (perkId: string) => {
+    const dependents = new Set<string>();
+    const lookup: { [key: string]: Perk } = {};
+    category.perks.forEach(p => (lookup[p.id] = p));
+
+    const visit = (id: string) => {
+      category.perks.forEach(p => {
+        if (p.requires?.includes(id) && unlockedPerks.has(p.id) && !dependents.has(p.id)) {
+          dependents.add(p.id);
+          visit(p.id);
+        }
+      });
+    };
+
+    visit(perkId);
+    return Array.from(dependents);
+  };
 
   const togglePerk = (perk: Perk) => {
     if (unlockedPerks.has(perk.id)) {
-      // Unselect the perk if it's not locked and no other perks depend on it
-      if (!lockedPerks.has(perk.id) && canUnselectPerk(perk.id)) {
-        const newUnlockedPerks = new Set(unlockedPerks);
-        newUnlockedPerks.delete(perk.id);
-        setUnlockedPerks(newUnlockedPerks);
-        onPerkUpdate(newUnlockedPerks);
-      }
+      // Do not allow unlocking changes for locked perks
+      if (lockedPerks.has(perk.id)) return;
+
+      // Allow unselecting — if other unlocked perks depend on this one, cascade-remove them as well
+      const dependents = findDependentUnlockedPerks(perk.id);
+      const newUnlockedPerks = new Set(unlockedPerks);
+
+      // Remove dependents first
+      dependents.forEach(d => newUnlockedPerks.delete(d));
+      // Then remove the perk itself
+      newUnlockedPerks.delete(perk.id);
+
+      setUnlockedPerks(newUnlockedPerks);
+      onPerkUpdate(newUnlockedPerks);
     } else if (isPerkAvailable(perk)) {
       // Unlock the perk
       const newUnlockedPerks = new Set([...unlockedPerks, perk.id]);
       setUnlockedPerks(newUnlockedPerks);
       onPerkUpdate(newUnlockedPerks);
-      
+
       // Check if all perks are unlocked for legendary
       if (newUnlockedPerks.size === category.perks.length) {
         setShowLegendary(true);
