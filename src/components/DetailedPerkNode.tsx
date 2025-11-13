@@ -170,14 +170,12 @@ export function DetailedPerkNode({
         {name}
       </div>
 
-      {/* Action Menu */}
+      {/* Action Menu (now appears above node to avoid overlapping description) */}
       {showMenu && unlocked && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, x: side === 'left' ? -10 : 10 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          className={`absolute top-1/2 -translate-y-1/2 bg-gray-900/95 border border-cyan-500/50 rounded shadow-lg z-50 overflow-hidden ${
-            side === 'left' ? 'left-full ml-2' : 'right-full mr-2'
-          }`}
+          initial={{ opacity: 0, scale: 0.9, y: 6 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-900/95 border border-cyan-500/50 rounded shadow-lg z-50 overflow-hidden`}
           style={{ backdropFilter: 'blur(8px)' }}
         >
           <button
@@ -204,12 +202,12 @@ export function DetailedPerkNode({
         </motion.div>
       )}
 
-      {/* Tooltip */}
+      {/* Tooltip (now appears above node to avoid overlapping description) */}
       {showTooltip && !showMenu && (
         <motion.div
-          initial={{ opacity: 0, x: 10 }}
-          animate={{ opacity: 1, x: 0 }}
-          className={`absolute top-1/2 -translate-y-1/2 ${side === 'left' ? 'left-full ml-3' : 'right-full mr-3'} bg-gray-900/95 border border-cyan-500/50 rounded p-2.5 w-64 z-50 backdrop-blur-sm`}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-gray-900/95 border border-cyan-500/50 rounded p-2.5 w-64 z-50 backdrop-blur-sm`}
         >
           <div className={`text-xs ${unlocked ? (locked ? 'text-yellow-400' : 'text-cyan-400') : 'text-cyan-400'}`}>
             {name}
