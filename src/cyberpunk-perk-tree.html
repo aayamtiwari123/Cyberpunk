@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberpunk Perk Tree - Attribute Matrix</title>
+  
+  <!-- React and ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel Standalone for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Framer Motion -->
+  <script src="https://unpkg.com/framer-motion@11/dist/framer-motion.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      overflow: hidden;
+      background: #1a1520;
+      color: white;
+    }
+    
+    /* Utility classes similar to Tailwind */
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .fixed { position: fixed; }
+    .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .gap-6 { gap: 1.5rem; }
+    .w-full { width: 100%; }
+    .h-screen { height: 100vh; }
+    .min-h-screen { min-height: 100vh; }
+    .overflow-hidden { overflow: hidden; }
+    .overflow-auto { overflow: auto; }
+    .overflow-x-hidden { overflow-x: hidden; }
+    .cursor-pointer { cursor: pointer; }
+    .transition-opacity { transition: opacity 0.2s; }
+    .transition-colors { transition: background-color 0.2s, color 0.2s; }
+    .hover\:opacity-80:hover { opacity: 0.8; }
+    .opacity-5 { opacity: 0.05; }
+    .opacity-70 { opacity: 0.7; }
+    .pointer-events-none { pointer-events: none; }
+    .z-10 { z-index: 10; }
+    .z-50 { z-index: 50; }
+    .rounded { border-radius: 0.25rem; }
+    .rounded-lg { border-radius: 0.5rem; }
+    .border { border-width: 1px; }
+    .border-2 { border-width: 2px; }
+    .backdrop-blur-sm { backdrop-filter: blur(4px); }
+    .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+    
+    /* Text utilities */
+    .text-xs { font-size: 0.75rem; line-height: 1rem; }
+    .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+    .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+    .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+    .text-6xl { font-size: 3.75rem; line-height: 1; }
+    .tracking-wider { letter-spacing: 0.05em; }
+    .tracking-widest { letter-spacing: 0.1em; }
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+    .whitespace-nowrap { white-space: nowrap; }
+    
+    /* Color utilities */
+    .text-white { color: white; }
+    .text-cyan-400 { color: rgb(34, 211, 238); }
+    .text-gray-300 { color: rgb(209, 213, 219); }
+    .text-gray-400 { color: rgb(156, 163, 175); }
+    .text-gray-500 { color: rgb(107, 114, 128); }
+    .text-gray-600 { color: rgb(75, 85, 99); }
+    .text-yellow-400 { color: rgb(250, 204, 21); }
+    .text-yellow-500 { color: rgb(234, 179, 8); }
+    .text-red-300 { color: rgb(252, 165, 165); }
+    .text-red-400 { color: rgb(248, 113, 113); }
+    .text-green-500 { color: rgb(34, 197, 94); }
+    .bg-cyan-400 { background-color: rgb(34, 211, 238); }
+    .bg-yellow-400 { background-color: rgb(250, 204, 21); }
+    .border-cyan-500 { border-color: rgb(6, 182, 212); }
+    .border-yellow-500 { border-color: rgb(234, 179, 8); }
+    
+    /* Spacing utilities */
+    .p-2 { padding: 0.5rem; }
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .p-8 { padding: 2rem; }
+    .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .px-8 { padding-left: 2rem; padding-right: 2rem; }
+    .py-1-5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+    .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+    .m-2 { margin: 0.5rem; }
+    .mb-1 { margin-bottom: 0.25rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-3 { margin-bottom: 0.75rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mt-1-5 { margin-top: 0.375rem; }
+    .mt-3 { margin-top: 0.75rem; }
+    .mt-6 { margin-top: 1.5rem; }
+    .ml-1 { margin-left: 0.25rem; }
+    .ml-2 { margin-left: 0.5rem; }
+    .mr-2 { margin-right: 0.5rem; }
+    .mr-3 { margin-right: 0.75rem; }
+    
+    /* Layout helpers */
+    .max-w-2xl { max-width: 42rem; }
+    .mx-4 { margin-left: 1rem; margin-right: 1rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    
+    /* Custom styles */
+    .bg-dark-purple {
+      background: #1a1520;
+    }
+    
+    .bg-gradient-dark {
+      background: linear-gradient(to bottom, #1a1520, #0f0a15, #1a1520);
+    }
+    
+    .bg-black-30 {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    .bg-black-40 {
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    
+    .bg-black-80 {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+    
+    .bg-gray-900-95 {
+      background-color: rgba(17, 24, 39, 0.95);
+    }
+    
+    .bg-gray-800-50 {
+      background-color: rgba(31, 41, 55, 0.5);
+    }
+    
+    .border-cyan-500-10 {
+      border-color: rgba(6, 182, 212, 0.1);
+    }
+    
+    .border-cyan-500-20 {
+      border-color: rgba(6, 182, 212, 0.2);
+    }
+    
+    .border-cyan-500-50 {
+      border-color: rgba(6, 182, 212, 0.5);
+    }
+    
+    .border-yellow-500-20 {
+      border-color: rgba(234, 179, 8, 0.2);
+    }
+    
+    .text-shadow-cyan {
+      text-shadow: 0 0 30px rgba(6, 182, 212, 0.6);
+    }
+    
+    .text-shadow-cyan-sm {
+      text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      border: 1px solid rgba(6, 182, 212, 0.5);
+      background-color: rgba(31, 41, 55, 0.5);
+      color: rgb(34, 211, 238);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn:hover {
+      background-color: rgba(8, 145, 178, 0.3);
+      color: rgb(103, 232, 249);
+    }
+    
+    .grid-pattern {
+      background-image: 
+        linear-gradient(rgba(139, 69, 69, 0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139, 69, 69, 0.3) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    
+    .w-5 { width: 1.25rem; }
+    .h-5 { height: 1.25rem; }
+    .w-6 { width: 1.5rem; }
+    .h-6 { height: 1.5rem; }
+    .w-8 { width: 2rem; }
+    .h-8 { height: 2rem; }
+    
+    .flex-wrap { flex-wrap: wrap; }
+    
+    .leading-relaxed { line-height: 1.625; }
+    
+    .bg-yellow-600 {
+      background-color: rgb(202, 138, 4);
+    }
+    
+    .bg-yellow-600:hover {
+      background-color: rgb(161, 98, 7);
+    }
+    
+    .bg-yellow-900-30:hover {
+      background-color: rgba(113, 63, 18, 0.3);
+    }
+    
+    .bg-red-900-30:hover {
+      background-color: rgba(127, 29, 29, 0.3);
+    }
+    
+    .text-black { color: black; }
+    
+    .block { display: block; }
+    
+    .disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .top-0 { top: 0; }
+    .top-8 { top: 2rem; }
+    .left-0 { left: 0; }
+    .left-1-2 { left: 50%; }
+    .left-full { left: 100%; }
+    .right-full { right: 100%; }
+    .bottom-0 { bottom: 0; }
+    .-bottom-10 { bottom: -2.5rem; }
+    
+    .transform { transform: translateX(0); }
+    .-translate-x-1-2 { transform: translateX(-50%); }
+    .-translate-y-1-2 { transform: translateY(-50%); }
+    .-translate-x-1-2.-translate-y-1-2 { transform: translate(-50%, -50%); }
+    
+    .w-32 { width: 8rem; }
+    .w-64 { width: 16rem; }
+    .w-0-5 { width: 0.125rem; }
+    .h-2 { height: 0.5rem; }
+    .-translate-y-1 { transform: translateY(-0.25rem); }
+    .translate-y-1 { transform: translateY(0.25rem); }
+    .-translate-x-1 { transform: translateX(-0.25rem); }
+    
+    .w-4 { width: 1rem; }
+    .h-4 { height: 1rem; }
+    
+    svg {
+      display: block;
+    }
+    
+    .max-w-1400 {
+      max-width: 87.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+    const { motion, AnimatePresence } = Motion;
+    
+    // Perk Data
+    const categories = [
+      {
+        id: 'technical',
+        name: 'TECHNICAL ABILITY',
+        subtitle: 'The Maker',
+        icon: '⚙️',
+        legendary: 'Design, build, and optimize almost any mechanical, electronic, or hybrid system from scratch. Predict performance and innovate reliably.',
+        perks: [
+          {
+            id: 't1',
+            name: "Fabricator's Eye",
+            reading: 'Engineering mechanics, Make: Electronics, DIY kits',
+            mastery: 'Instantly understand mechanical/electronic objects and suggest improvements',
+            position: { x: 360, y: 120 }
+          },
+          {
+            id: 't2',
+            name: 'Material Whisperer',
+            reading: 'Materials science: Callister, lab experiments on metals/polymers',
+            mastery: 'Identify likely materials, suggest replacements/optimizations',
+            position: { x: 610, y: 120 }
+          },
+          {
+            id: 't3',
+            name: 'Precision Builder',
+            reading: 'CAD tutorials (Fusion360/SolidWorks), machining practice',
+            mastery: 'Build devices to exact specifications without error',
+            position: { x: 360, y: 270 },
+            requires: ['t1']
+          },
+          {
+            id: 't4',
+            name: 'Circuit Sense',
+            reading: 'Basic electronics, multimeter/oscilloscope, Arduino/STM32',
+            mastery: 'Identify, troubleshoot, and modify circuits quickly',
+            position: { x: 610, y: 270 },
+            requires: ['t2']
+          },
+          {
+            id: 't5',
+            name: 'Reactive Designer',
+            reading: 'Safe chemical reactions, Zumdahl Chemistry',
+            mastery: 'Combine materials safely and predict reactions',
+            position: { x: 860, y: 270 },
+            requires: ['t2']
+          },
+          {
+            id: 't6',
+            name: 'Loop Master',
+            reading: 'Control systems (Ogata), MATLAB simulations',
+            mastery: 'Design self-regulating automated systems',
+            position: { x: 485, y: 420 },
+            requires: ['t3', 't4']
+          },
+          {
+            id: 't7',
+            name: 'System Integrator',
+            reading: 'Multi-disciplinary design, simple robotics',
+            mastery: 'Integrate multiple components into a functional system',
+            position: { x: 735, y: 420 },
+            requires: ['t4', 't5']
+          },
+          {
+            id: 't8',
+            name: 'Nano-Crafter',
+            reading: 'Intro to nanotech, miniaturization',
+            mastery: 'Design small-scale circuits and mechanical parts',
+            position: { x: 485, y: 570 },
+            requires: ['t6']
+          },
+          {
+            id: 't9',
+            name: 'Autonomous Systems',
+            reading: 'Robotics & AI basics, IoT integration',
+            mastery: 'Create devices that perform tasks independently',
+            position: { x: 735, y: 570 },
+            requires: ['t7']
+          },
+          {
+            id: 't10',
+            name: 'Predictive Engineer',
+            reading: 'Failure analysis, optimization techniques',
+            mastery: 'Predict failures and optimize design before building',
+            position: { x: 610, y: 720 },
+            requires: ['t8', 't9']
+          }
+        ]
+      },
+      {
+        id: 'matter',
+        name: 'MATTER',
+        subtitle: 'The Lawsmith',
+        icon: '⚛️',
+        legendary: 'Predict and synthesize chemical or material outcomes from first principles. Design advanced experiments and materials with accuracy.',
+        perks: [
+          {
+            id: 'm1',
+            name: 'Field Weaver',
+            reading: 'Classical mechanics: H.K. Dass, Feynman Lectures Vol 1',
+            mastery: 'Analyze forces/motion and predict outcomes',
+            position: { x: 360, y: 120 }
+          },
+          {
+            id: 'm2',
+            name: 'Elemental Architect',
+            reading: 'General chemistry: Zumdahl, lab reactions',
+            mastery: 'Identify elements, predict reactions',
+            position: { x: 680, y: 120 }
+          },
+          {
+            id: 'm3',
+            name: 'Energy Transmutation',
+            reading: 'Thermodynamics: Feynman Vol 1/2, calorimetry',
+            mastery: 'Calculate energy transformations, predict outcomes',
+            position: { x: 360, y: 270 },
+            requires: ['m1']
+          },
+          {
+            id: 'm4',
+            name: 'Reactive Flow',
+            reading: 'Chemical kinetics, lab rate experiments',
+            mastery: 'Predict reaction rates and direction',
+            position: { x: 680, y: 270 },
+            requires: ['m2']
+          },
+          {
+            id: 'm5',
+            name: 'Lattice Whisperer',
+            reading: 'Crystallography, solid state physics',
+            mastery: 'Predict crystal structures, defects, material properties',
+            position: { x: 520, y: 420 },
+            requires: ['m3', 'm4']
+          },
+          {
+            id: 'm6',
+            name: 'Material Synthesizer',
+            reading: 'Inorganic/organic synthesis, lab practice',
+            mastery: 'Design safe chemical synthesis at small scale',
+            position: { x: 520, y: 570 },
+            requires: ['m5']
+          },
+          {
+            id: 'm7',
+            name: 'Predictive ChemPhys',
+            reading: 'Quantum mechanics: Griffiths QM, Feynman Vol 3',
+            mastery: 'Predict chemical behavior and properties using physics/QM',
+            position: { x: 520, y: 720 },
+            requires: ['m6']
+          }
+        ]
+      },
+      {
+        id: 'intelligence',
+        name: 'INTELLIGENCE',
+        subtitle: 'The Architect',
+        icon: '🧠',
+        legendary: 'Human supercomputer: instant recall, predictive analysis, multi-domain problem-solving, mental simulation of experiments or systems.',
+        perks: [
+          {
+            id: 'i1',
+            name: 'Advanced Memory Recollection',
+            reading: 'Memory palace, Major System',
+            mastery: 'Recall books, formulas, numbers instantly',
+            position: { x: 360, y: 120 }
+          },
+          {
+            id: 'i2',
+            name: 'Advanced Mental Math',
+            reading: 'Speed arithmetic, probability',
+            mastery: 'Solve complex calculations mentally',
+            position: { x: 680, y: 120 }
+          },
+          {
+            id: 'i3',
+            name: 'Logic & Systems Analysis',
+            reading: 'Introduction to Logic, problem decomposition',
+            mastery: 'Analyze complex systems systematically',
+            position: { x: 360, y: 270 },
+            requires: ['i1']
+          },
+          {
+            id: 'i4',
+            name: 'Pattern Calculator',
+            reading: 'Combinatorics, sequences, number patterns',
+            mastery: 'Recognize patterns in numbers, reactions, behaviors',
+            position: { x: 680, y: 270 },
+            requires: ['i2']
+          },
+          {
+            id: 'i5',
+            name: 'Strategic Foresight',
+            reading: 'Decision theory, scenario planning',
+            mastery: 'Mentally simulate multiple outcomes and choose optimal path',
+            position: { x: 520, y: 420 },
+            requires: ['i3', 'i4']
+          },
+          {
+            id: 'i6',
+            name: 'Algorithmic Mind',
+            reading: 'Algorithms, coding',
+            mastery: 'Design algorithms mentally for problem solving and optimization',
+            position: { x: 360, y: 570 },
+            requires: ['i5']
+          },
+          {
+            id: 'i7',
+            name: 'Integrated Knowledge',
+            reading: 'Cross-domain linking (physics+chem+engineering)',
+            mastery: 'Apply multiple knowledge domains to solve problems',
+            position: { x: 680, y: 570 },
+            requires: ['i5']
+          },
+          {
+            id: 'i8',
+            name: 'Mental Simulation',
+            reading: 'Case studies, thought experiments',
+            mastery: 'Predict outcomes of complex systems before acting',
+            position: { x: 520, y: 720 },
+            requires: ['i6', 'i7']
+          }
+        ]
+      },
+      {
+        id: 'cool',
+        name: 'COOL',
+        subtitle: 'The Phantom Mind',
+        icon: '😎',
+        legendary: 'Natural influencer and tactician: people respond instinctively to your presence, persuasion, and reputation.',
+        perks: [
+          {
+            id: 'c1',
+            name: 'Style & Fashion',
+            reading: 'Dressing the Man, observation',
+            mastery: 'Convey confidence and authority through appearance',
+            position: { x: 410, y: 120 }
+          },
+          {
+            id: 'c2',
+            name: 'Charisma & Influence',
+            reading: 'Influence by Cialdini, public speaking',
+            mastery: 'Persuade, inspire, manipulate people reliably',
+            position: { x: 750, y: 120 }
+          },
+          {
+            id: 'c3',
+            name: 'Diplomacy & Negotiation',
+            reading: 'Getting to Yes',
+            mastery: 'Resolve conflicts and negotiate favorable outcomes',
+            position: { x: 410, y: 300 },
+            requires: ['c1']
+          },
+          {
+            id: 'c4',
+            name: 'Composure & Psychological Edge',
+            reading: 'Emotional intelligence, mindfulness',
+            mastery: 'Maintain calm, read people, respond strategically',
+            position: { x: 750, y: 300 },
+            requires: ['c2']
+          },
+          {
+            id: 'c5',
+            name: 'Reputation & Presence',
+            reading: 'Leaders Eat Last, networking',
+            mastery: 'Command respect and influence groups effortlessly',
+            position: { x: 580, y: 480 },
+            requires: ['c3', 'c4']
+          },
+          {
+            id: 'c6',
+            name: 'Influence Ripple',
+            reading: 'Social dynamics, group behavior analysis',
+            mastery: 'Subtly influence outcomes in groups or networks',
+            position: { x: 580, y: 660 },
+            requires: ['c5']
+          }
+        ]
+      },
+      {
+        id: 'body',
+        name: 'BODY',
+        subtitle: 'The Vessel',
+        icon: '💪',
+        legendary: 'Peak human physical specimen: strength, endurance, agility, resilience, and self-discipline at elite level.',
+        perks: [
+          {
+            id: 'b1',
+            name: 'Strength & Power',
+            reading: 'Convict Conditioning, progressive overload',
+            mastery: 'Extreme strength feats (100+ push-ups/squats/pull-ups)',
+            position: { x: 360, y: 120 }
+          },
+          {
+            id: 'b2',
+            name: 'Endurance & Stamina',
+            reading: 'Cardio, HIIT, running',
+            mastery: 'High-intensity activity for extended periods without fatigue',
+            position: { x: 680, y: 120 }
+          },
+          {
+            id: 'b6',
+            name: 'Self-Control',
+            reading: 'Meditation, habit formation',
+            mastery: 'Control impulses, sustain high-performance routines',
+            position: { x: 1000, y: 120 }
+          },
+          {
+            id: 'b3',
+            name: 'Agility & Coordination',
+            reading: 'Parkour, gymnastics, balance',
+            mastery: 'Move efficiently, react quickly, precise coordination',
+            position: { x: 360, y: 300 },
+            requires: ['b1', 'b6']
+          },
+          {
+            id: 'b4',
+            name: 'Pain Tolerance & Resilience',
+            reading: 'Cold exposure, progressive overload',
+            mastery: 'Maintain performance under discomfort or minor injury',
+            position: { x: 680, y: 300 },
+            requires: ['b2', 'b6']
+          },
+          {
+            id: 'b5',
+            name: 'Bio-Optimization & Health',
+            reading: 'Nutrition, sleep, recovery',
+            mastery: 'Peak health, rapid recovery, optimized energy levels',
+            position: { x: 520, y: 480 },
+            requires: ['b3', 'b4']
+          }
+        ]
+      },
+      {
+        id: 'relic',
+        name: 'RELIC',
+        subtitle: 'The Inner Evolution',
+        icon: '✨',
+        legendary: 'Harmonized mind-body-digital integration; extreme awareness, mental mastery, and creative flow under any circumstance.',
+        perks: [
+          {
+            id: 'r1',
+            name: 'Consciousness & Awareness',
+            reading: 'Mindfulness, meditation',
+            mastery: 'Maintain hyper-awareness and focus under any condition',
+            position: { x: 520, y: 120 }
+          },
+          {
+            id: 'r2',
+            name: 'Memory & Mental Mastery',
+            reading: 'Advanced memory palace',
+            mastery: 'Recall and integrate vast information instantly',
+            position: { x: 520, y: 300 },
+            requires: ['r1']
+          },
+          {
+            id: 'r3',
+            name: 'Mind-Body Synchronization',
+            reading: 'Yoga, Tai Chi, calisthenics with awareness',
+            mastery: 'Perform physical tasks with peak mental coordination',
+            position: { x: 360, y: 480 },
+            requires: ['r2']
+          },
+          {
+            id: 'r4',
+            name: 'Digital / Tech Symbiosis',
+            reading: 'Programming, AI basics',
+            mastery: 'Predict and simulate digital or technical systems mentally',
+            position: { x: 680, y: 480 },
+            requires: ['r2']
+          },
+          {
+            id: 'r5',
+            name: 'Self-Transcendence',
+            reading: 'Creativity exercises, extreme focus',
+            mastery: 'Achieve flow state for extended periods; make complex decisions under pressure',
+            position: { x: 520, y: 660 },
+            requires: ['r3', 'r4']
+          }
+        ]
+      }
+    ];
+
+    const connections = {
+      technical: [
+        { from: 't1', to: 't3' },
+        { from: 't2', to: 't4' },
+        { from: 't2', to: 't5' },
+        { from: 't3', to: 't6' },
+        { from: 't4', to: 't6' },
+        { from: 't4', to: 't7' },
+        { from: 't5', to: 't7' },
+        { from: 't6', to: 't8' },
+        { from: 't7', to: 't9' },
+        { from: 't8', to: 't10' },
+        { from: 't9', to: 't10' }
+      ],
+      matter: [
+        { from: 'm1', to: 'm3' },
+        { from: 'm2', to: 'm4' },
+        { from: 'm3', to: 'm5' },
+        { from: 'm4', to: 'm5' },
+        { from: 'm5', to: 'm6' },
+        { from: 'm6', to: 'm7' }
+      ],
+      intelligence: [
+        { from: 'i1', to: 'i3' },
+        { from: 'i2', to: 'i4' },
+        { from: 'i3', to: 'i5' },
+        { from: 'i4', to: 'i5' },
+        { from: 'i5', to: 'i6' },
+        { from: 'i5', to: 'i7' },
+        { from: 'i6', to: 'i8' },
+        { from: 'i7', to: 'i8' }
+      ],
+      cool: [
+        { from: 'c1', to: 'c3' },
+        { from: 'c2', to: 'c4' },
+        { from: 'c3', to: 'c5' },
+        { from: 'c4', to: 'c5' },
+        { from: 'c5', to: 'c6' }
+      ],
+      body: [
+        { from: 'b1', to: 'b3' },
+        { from: 'b2', to: 'b4' },
+        { from: 'b6', to: 'b3' },
+        { from: 'b6', to: 'b4' },
+        { from: 'b3', to: 'b5' },
+        { from: 'b4', to: 'b5' }
+      ],
+      relic: [
+        { from: 'r1', to: 'r2' },
+        { from: 'r2', to: 'r3' },
+        { from: 'r2', to: 'r4' },
+        { from: 'r3', to: 'r5' },
+        { from: 'r4', to: 'r5' }
+      ]
+    };
+
+    // Icon component helpers
+    const ArrowLeft = ({ className, ...props }) => (
+      <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    );
+
+    const Award = ({ className, ...props }) => (
+      <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <circle cx="12" cy="8" r="7"></circle>
+        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+      </svg>
+    );
+
+    const Lock = ({ className, ...props }) => (
+      <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    );
+
+    const Check = ({ className, ...props }) => (
+      <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    );
+
+    const BookOpen = ({ className, ...props }) => (
+      <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+      </svg>
+    );
+
+    const LockKeyhole = ({ className, ...props }) => (
+      <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <circle cx="12" cy="16" r="1"></circle>
+        <rect x="3" y="10" width="18" height="12" rx="2"></rect>
+        <path d="M7 10V7a5 5 0 0 1 10 0v3"></path>
+      </svg>
+    );
+
+    // CategoryNode Component
+    function CategoryNode({ name, subtitle, level, icon, position, onClick }) {
+      return (
+        <div
+          className="absolute cursor-pointer transition-opacity hover:opacity-80"
+          style={{
+            left: `${position.x}px`,
+            top: `${position.y}px`,
+            transform: 'translate(-50%, -50%)'
+          }}
+          onClick={onClick}
+        >
+          <div className="relative">
+            <svg width="200" height="180" viewBox="0 0 200 180">
+              <defs>
+                <linearGradient id={`grad-${name}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: 'rgba(60, 20, 20, 0.6)', stopOpacity: 1 }} />
+                  <stop offset="100%" style={{ stopColor: 'rgba(30, 10, 10, 0.8)', stopOpacity: 1 }} />
+                </linearGradient>
+              </defs>
+              <path
+                d="M 100 10 L 170 50 L 170 130 L 100 170 L 30 130 L 30 50 Z"
+                fill={`url(#grad-${name})`}
+                stroke="rgb(139, 69, 69)"
+                strokeWidth="2"
+              />
+            </svg>
+
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div style={{ fontSize: '1.875rem', marginBottom: '0.5rem' }}>{icon}</div>
+              <div className="text-cyan-400 text-sm tracking-wider mb-1">{name}</div>
+              <div className="text-gray-500 text-xs mb-2">{subtitle}</div>
+              <div className="flex items-center gap-2">
+                <svg width="20" height="20" viewBox="0 0 20 20">
+                  <path
+                    d="M 10 2 L 12 8 L 18 8 L 13 12 L 15 18 L 10 14 L 5 18 L 7 12 L 2 8 L 8 8 Z"
+                    fill="rgb(6, 182, 212)"
+                    opacity="0.7"
+                  />
+                </svg>
+                <span className="text-cyan-400">{level}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // CategorySelection Component
+    const categoryPositions = {
+      relic: { x: 640, y: 120 },
+      body: { x: 320, y: 280 },
+      technical: { x: 960, y: 280 },
+      intelligence: { x: 320, y: 520 },
+      cool: { x: 960, y: 520 },
+      matter: { x: 640, y: 680 }
+    };
+
+    function CategorySelection({ categories, onSelectCategory, characterLevel, categoryProgress }) {
+      return (
+        <div className="relative w-full h-screen overflow-hidden bg-dark-purple flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-dark" />
+          
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0 grid-pattern" />
+          </div>
+
+          <div className="relative" style={{ width: '1400px', height: '800px' }}>
+            <div className="absolute left-1-2 top-1-2 flex flex-col items-center z-10" style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
+              <div className="text-cyan-400 text-xs tracking-widest mb-2 opacity-70">LEVEL</div>
+              <div className="text-6xl text-cyan-400 text-shadow-cyan">
+                {characterLevel}
+              </div>
+              
+              <svg className="absolute inset-0 pointer-events-none" style={{ width: '1400px', height: '800px', left: '-700px', top: '-400px' }}>
+                <line x1="700" y1="400" x2="640" y2="120" stroke="rgba(139, 69, 69, 0.4)" strokeWidth="2" />
+                <line x1="700" y1="400" x2="320" y2="280" stroke="rgba(139, 69, 69, 0.4)" strokeWidth="2" />
+                <line x1="700" y1="400" x2="960" y2="280" stroke="rgba(139, 69, 69, 0.4)" strokeWidth="2" />
+                <line x1="700" y1="400" x2="320" y2="520" stroke="rgba(139, 69, 69, 0.4)" strokeWidth="2" />
+                <line x1="700" y1="400" x2="960" y2="520" stroke="rgba(139, 69, 69, 0.4)" strokeWidth="2" />
+                <line x1="700" y1="400" x2="640" y2="680" stroke="rgba(139, 69, 69, 0.4)" strokeWidth="2" />
+              </svg>
+            </div>
+
+            {categories.map(category => {
+              const position = categoryPositions[category.id] || { x: 50, y: 50 };
+              const level = categoryProgress[category.id]?.size || 0;
+              
+              return (
+                <CategoryNode
+                  key={category.id}
+                  name={category.name}
+                  subtitle={category.subtitle}
+                  level={level}
+                  icon={category.icon}
+                  position={position}
+                  onClick={() => onSelectCategory(category.id)}
+                />
+              );
+            })}
+          </div>
+
+          <div className="absolute top-8 left-1-2 text-center z-10" style={{ left: '50%', transform: 'translateX(-50%)' }}>
+            <h1 className="text-cyan-400 tracking-widest mb-2 text-shadow-cyan-sm">
+              ATTRIBUTE MATRIX
+            </h1>
+            <p className="text-gray-500 text-sm">Select an attribute to view skill tree</p>
+          </div>
+        </div>
+      );
+    }
+
+    // DetailedPerkNode Component
+    function DetailedPerkNode({
+      name,
+      reading,
+      mastery,
+      unlocked,
+      locked,
+      available,
+      position,
+      onClick,
+      onLockToggle,
+      side = 'right'
+    }) {
+      const [showTooltip, setShowTooltip] = useState(false);
+      const [showMenu, setShowMenu] = useState(false);
+
+      const handleClick = (e) => {
+        if (unlocked) {
+          setShowMenu(!showMenu);
+        } else if (available) {
+          onClick();
+        }
+      };
+
+      const handleUnlock = () => {
+        if (!locked) {
+          onClick();
+          setShowMenu(false);
+        }
+      };
+
+      const handleLockToggle = () => {
+        onLockToggle();
+        setShowMenu(false);
+      };
+
+      const nodeStyle = {
+        scale: (available || unlocked) ? 1.05 : 1,
+        transition: 'transform 0.2s'
+      };
+
+      return (
+        <motion.div
+          className="absolute cursor-pointer"
+          style={{
+            left: `${position.x}px`,
+            top: `${position.y}px`,
+            transform: 'translate(-50%, -50%)'
+          }}
+          whileHover={{ scale: (available || unlocked) ? 1.1 : 1 }}
+          whileTap={{ scale: (available || unlocked) ? 0.95 : 1 }}
+          onClick={handleClick}
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+        >
+          <div className="relative">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <defs>
+                <linearGradient id={`perk-grad-${name}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: unlocked ? 'rgb(6, 182, 212)' : available ? 'rgb(139, 69, 69)' : 'rgb(30, 30, 30)', stopOpacity: 0.8 }} />
+                  <stop offset="100%" style={{ stopColor: unlocked ? 'rgb(8, 145, 178)' : available ? 'rgb(100, 40, 40)' : 'rgb(20, 20, 20)', stopOpacity: 0.8 }} />
+                </linearGradient>
+              </defs>
+              
+              {unlocked && (
+                <rect
+                  x="50" y="50"
+                  width="62" height="62"
+                  transform="translate(-31, -31) rotate(45, 50, 50)"
+                  fill="none"
+                  stroke={locked ? 'rgb(255, 215, 0)' : 'rgb(6, 182, 212)'}
+                  strokeWidth="2"
+                  opacity="0.3"
+                  filter="blur(4px)"
+                />
+              )}
+              
+              <rect
+                x="50" y="50"
+                width="57" height="57"
+                transform="translate(-28.5, -28.5) rotate(45, 50, 50)"
+                fill={`url(#perk-grad-${name})`}
+                stroke={unlocked ? (locked ? 'rgb(255, 215, 0)' : 'rgb(6, 182, 212)') : available ? 'rgb(139, 69, 69)' : 'rgb(60, 60, 60)'}
+                strokeWidth="2"
+              />
+              
+              <circle
+                cx="50"
+                cy="50"
+                r="18"
+                fill={unlocked ? (locked ? 'rgba(255, 215, 0, 0.3)' : 'rgba(6, 182, 212, 0.3)') : available ? 'rgba(139, 69, 69, 0.3)' : 'rgba(60, 60, 60, 0.3)'}
+              />
+            </svg>
+
+            <div className="absolute" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+              {unlocked && locked ? (
+                <LockKeyhole className="w-5 h-5 text-yellow-400" />
+              ) : unlocked ? (
+                <Check className="w-5 h-5 text-cyan-400" />
+              ) : !available ? (
+                <Lock className="w-5 h-5 text-gray-600" />
+              ) : (
+                <BookOpen className="w-5 h-5 text-red-400" />
+              )}
+            </div>
+
+            {unlocked && (
+              <>
+                <div className={`absolute top-0 left-1-2 w-0-5 h-2 ${locked ? 'bg-yellow-400' : 'bg-cyan-400'}`} style={{ left: '50%', transform: 'translate(-50%, -0.25rem)' }}></div>
+                <div className={`absolute bottom-0 left-1-2 w-0-5 h-2 ${locked ? 'bg-yellow-400' : 'bg-cyan-400'}`} style={{ left: '50%', bottom: 0, transform: 'translate(-50%, 0.25rem)' }}></div>
+              </>
+            )}
+          </div>
+
+          <div className={`absolute -bottom-10 text-xs text-center w-32 ${
+            unlocked ? (locked ? 'text-yellow-400' : 'text-cyan-400') : available ? 'text-red-300' : 'text-gray-600'
+          }`} style={{ left: '50%', transform: 'translateX(-50%)' }}>
+            {name}
+          </div>
+
+          {showMenu && unlocked && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, x: side === 'left' ? -10 : 10 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              className={`absolute bg-gray-900-95 border border-cyan-500-50 rounded shadow-lg z-50 overflow-hidden ${
+                side === 'left' ? 'left-full ml-2' : 'right-full mr-2'
+              }`}
+              style={{ backdropFilter: 'blur(8px)', top: '50%', transform: 'translateY(-50%)' }}
+            >
+              <button
+                onClick={handleUnlock}
+                disabled={locked}
+                className={`block w-full px-2 py-1-5 text-left text-xs transition-colors whitespace-nowrap ${
+                  locked 
+                    ? 'text-gray-600 disabled bg-gray-800-50' 
+                    : 'text-red-400 bg-red-900-30'
+                }`}
+              >
+                {locked ? 'Unlock' : 'Unselect'}
+              </button>
+              <button
+                onClick={handleLockToggle}
+                className="block w-full px-2 py-1-5 text-left text-xs transition-colors whitespace-nowrap text-yellow-400 bg-yellow-900-30"
+              >
+                {locked ? 'Unlock' : 'Lock'}
+              </button>
+            </motion.div>
+          )}
+
+          {showTooltip && !showMenu && (
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="absolute bg-gray-900-95 border border-cyan-500-50 rounded p-2 w-64 z-50 backdrop-blur-sm"
+              style={{ top: '50%', transform: 'translateY(-50%)', right: '100%', marginRight: '0.75rem' }}
+            >
+              <div className={`text-xs ${unlocked ? (locked ? 'text-yellow-400' : 'text-cyan-400') : 'text-cyan-400'}`}>
+                {name}
+                {locked && <span style={{ fontSize: '10px', marginLeft: '0.25rem' }}>(Locked)</span>}
+              </div>
+              <div className="text-gray-300 mb-1-5 mt-1-5" style={{ fontSize: '10px' }}>
+                <span className="text-yellow-500">Reading:</span> {reading}
+              </div>
+              <div className="text-gray-300" style={{ fontSize: '10px' }}>
+                <span className="text-green-500">Mastery:</span> {mastery}
+              </div>
+              {!unlocked && available && (
+                <div className="text-cyan-400 mt-1-5" style={{ fontSize: '10px' }}>Click to unlock</div>
+              )}
+              {!available && !unlocked && (
+                <div className="text-red-400 mt-1-5" style={{ fontSize: '10px' }}>Prerequisites required</div>
+              )}
+              {unlocked && (
+                <div className="text-gray-400 mt-1-5" style={{ fontSize: '10px' }}>
+                  {locked ? 'Click to unlock and manage' : 'Click to unselect or lock'}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </motion.div>
+      );
+    }
+
+    // DetailedPerkTree Component
+    function DetailedPerkTree({ category, onBack, initialUnlockedPerks, onPerkUpdate }) {
+      const [unlockedPerks, setUnlockedPerks] = useState(initialUnlockedPerks);
+      const [lockedPerks, setLockedPerks] = useState(new Set());
+      const [showLegendary, setShowLegendary] = useState(false);
+      
+      const leftAttributes = ['body', 'intelligence'];
+      const rightAttributes = ['technical', 'cool', 'matter', 'relic'];
+      const side = leftAttributes.includes(category.id) ? 'left' : 'right';
+
+      const isPerkAvailable = (perk) => {
+        if (unlockedPerks.has(perk.id)) return false;
+        if (!perk.requires || perk.requires.length === 0) return true;
+        return perk.requires.every(req => unlockedPerks.has(req));
+      };
+
+      const canUnselectPerk = (perkId) => {
+        return !category.perks.some(p => 
+          unlockedPerks.has(p.id) && 
+          p.requires?.includes(perkId)
+        );
+      };
+
+      const togglePerk = (perk) => {
+        if (unlockedPerks.has(perk.id)) {
+          if (!lockedPerks.has(perk.id) && canUnselectPerk(perk.id)) {
+            const newUnlockedPerks = new Set(unlockedPerks);
+            newUnlockedPerks.delete(perk.id);
+            setUnlockedPerks(newUnlockedPerks);
+            onPerkUpdate(newUnlockedPerks);
+          }
+        } else if (isPerkAvailable(perk)) {
+          const newUnlockedPerks = new Set([...unlockedPerks, perk.id]);
+          setUnlockedPerks(newUnlockedPerks);
+          onPerkUpdate(newUnlockedPerks);
+          
+          if (newUnlockedPerks.size === category.perks.length) {
+            setShowLegendary(true);
+          }
+        }
+      };
+
+      const toggleLock = (perkId) => {
+        const newLockedPerks = new Set(lockedPerks);
+        if (lockedPerks.has(perkId)) {
+          newLockedPerks.delete(perkId);
+        } else {
+          newLockedPerks.add(perkId);
+        }
+        setLockedPerks(newLockedPerks);
+      };
+
+      const isConnectionUnlocked = (from, to) => {
+        return unlockedPerks.has(from) && unlockedPerks.has(to);
+      };
+
+      const categoryConnections = connections[category.id] || [];
+
+      return (
+        <div className="min-h-screen bg-dark-purple text-white overflow-x-hidden">
+          <div className="fixed inset-0 bg-gradient-dark" />
+          
+          <div className="fixed inset-0 opacity-5 pointer-events-none">
+            <div className="absolute inset-0 grid-pattern" />
+          </div>
+
+          <div className="relative z-10 border-b border-cyan-500-20 bg-black-40 backdrop-blur-sm">
+            <div className="w-full px-4 py-4 flex items-center justify-between max-w-1400 mx-auto" style={{ maxWidth: '1400px' }}>
+              <button
+                onClick={onBack}
+                className="btn"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span className="text-sm tracking-wider">BACK TO ATTRIBUTES</span>
+              </button>
+
+              <div className="flex items-center gap-4">
+                <div style={{ fontSize: '1.5rem' }}>{category.icon}</div>
+                <div>
+                  <div className="text-cyan-400 tracking-widest text-shadow-cyan-sm">
+                    {category.name}
+                  </div>
+                  <div className="text-gray-400 text-sm">{category.subtitle}</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-6 flex-wrap">
+                <div className="text-center">
+                  <div className="text-xs text-gray-400 mb-1">ATTRIBUTE LEVEL</div>
+                  <div className="text-cyan-400">{unlockedPerks.size}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-gray-400 mb-1">Perks Unlocked</div>
+                  <div className="text-cyan-400">{unlockedPerks.size} / {category.perks.length}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-gray-400 mb-1">Locked Perks</div>
+                  <div className="text-yellow-400">{lockedPerks.size}</div>
+                </div>
+                <div className="text-yellow-500 flex items-center gap-2">
+                  <span className="text-2xl">0</span>
+                  <Award className="w-5 h-5" />
+                  <span className="text-xs text-gray-400">PERK POINTS</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative z-10 w-full px-4 py-6 max-w-1400 mx-auto" style={{ maxWidth: '1400px' }}>
+            <div className="relative bg-black-30 border border-cyan-500-10 rounded-lg p-6 overflow-auto" style={{ height: '700px' }}>
+              <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                {categoryConnections.map(({ from, to }, index) => {
+                  const fromPerk = category.perks.find(p => p.id === from);
+                  const toPerk = category.perks.find(p => p.id === to);
+                  if (!fromPerk || !toPerk) return null;
+
+                  const unlocked = isConnectionUnlocked(from, to);
+                  
+                  return (
+                    <g key={index}>
+                      <line
+                        x1={fromPerk.position.x + 50}
+                        y1={fromPerk.position.y + 50}
+                        x2={toPerk.position.x + 50}
+                        y2={toPerk.position.y + 50}
+                        stroke={unlocked ? 'rgb(6, 182, 212)' : 'rgb(100, 40, 40)'}
+                        strokeWidth="2"
+                        opacity={unlocked ? 0.8 : 0.3}
+                      />
+                      {unlocked && (
+                        <line
+                          x1={fromPerk.position.x + 50}
+                          y1={fromPerk.position.y + 50}
+                          x2={toPerk.position.x + 50}
+                          y2={toPerk.position.y + 50}
+                          stroke="rgb(6, 182, 212)"
+                          strokeWidth="2"
+                          opacity="0.3"
+                          filter="blur(4px)"
+                        />
+                      )}
+                    </g>
+                  );
+                })}
+              </svg>
+
+              {category.perks.map(perk => (
+                <DetailedPerkNode
+                  key={perk.id}
+                  {...perk}
+                  unlocked={unlockedPerks.has(perk.id)}
+                  locked={lockedPerks.has(perk.id)}
+                  available={isPerkAvailable(perk)}
+                  onClick={() => togglePerk(perk)}
+                  onLockToggle={() => toggleLock(perk.id)}
+                  side={side}
+                />
+              ))}
+            </div>
+
+            <AnimatePresence>
+              {showLegendary && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black-80 backdrop-blur-sm"
+                  onClick={() => setShowLegendary(false)}
+                >
+                  <div className="border-2 border-yellow-500 rounded-lg p-8 max-w-2xl mx-4" style={{ background: 'linear-gradient(to bottom, rgba(113, 63, 18, 0.4), rgba(31, 41, 55, 0.4))' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <Award className="w-8 h-8 text-yellow-500" />
+                      <h2 className="text-yellow-500 tracking-wider">LEGENDARY UNLOCK</h2>
+                    </div>
+                    <p className="text-gray-300 leading-relaxed">{category.legendary}</p>
+                    <button
+                      onClick={() => setShowLegendary(false)}
+                      className="mt-6 px-6 py-2 bg-yellow-600 text-black rounded transition-colors"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="mt-6 bg-black-30 border border-yellow-500-20 rounded-lg p-4 backdrop-blur-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <Award className="w-6 h-6 text-yellow-500" />
+                <h3 className="text-yellow-500 tracking-wider">Legendary Unlock</h3>
+              </div>
+              <p className="text-gray-400 text-sm leading-relaxed">{category.legendary}</p>
+              {unlockedPerks.size === category.perks.length && (
+                <div className="mt-3 text-green-500 text-sm flex items-center gap-2">
+                  <Award className="w-4 h-4" />
+                  <span>UNLOCKED!</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Main App Component
+    function App() {
+      const [selectedCategory, setSelectedCategory] = useState(null);
+      const [categoryProgress, setCategoryProgress] = useState({
+        technical: new Set(),
+        matter: new Set(),
+        intelligence: new Set(),
+        cool: new Set(),
+        body: new Set(),
+        relic: new Set()
+      });
+
+      const characterLevel = useMemo(() => {
+        let totalUnlocked = 0;
+        Object.values(categoryProgress).forEach(perks => {
+          totalUnlocked += perks.size;
+        });
+        return Math.floor(totalUnlocked / 5) + 1;
+      }, [categoryProgress]);
+
+      const handleSelectCategory = (categoryId) => {
+        setSelectedCategory(categoryId);
+      };
+
+      const handleBack = () => {
+        setSelectedCategory(null);
+      };
+
+      const handlePerkUpdate = (categoryId, unlockedPerks) => {
+        setCategoryProgress(prev => ({
+          ...prev,
+          [categoryId]: unlockedPerks
+        }));
+      };
+
+      const currentCategory = categories.find(c => c.id === selectedCategory);
+
+      return (
+        <>
+          {!selectedCategory ? (
+            <CategorySelection
+              categories={categories}
+              onSelectCategory={handleSelectCategory}
+              characterLevel={characterLevel}
+              categoryProgress={categoryProgress}
+            />
+          ) : currentCategory ? (
+            <DetailedPerkTree
+              category={currentCategory}
+              onBack={handleBack}
+              initialUnlockedPerks={categoryProgress[currentCategory.id] || new Set()}
+              onPerkUpdate={(perks) => handlePerkUpdate(currentCategory.id, perks)}
+            />
+          ) : null}
+        </>
+      );
+    }
+
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
