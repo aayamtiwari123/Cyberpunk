@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { Lock, Check, BookOpen, LockKeyhole } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { perkMastery } from '../data/perkMastery';
 
 interface DetailedPerkNodeProps {
@@ -35,6 +35,26 @@ export function DetailedPerkNode({
   const [showDetails, setShowDetails] = useState(false);
 
   const detailInfo = perkMastery[id];
+
+  // Close modal on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowDetails(false);
+    };
+    if (showDetails) document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [showDetails]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key.toLowerCase() === 'v') {
+      e.preventDefault();
+      setShowDetails(true);
+    }
+    if (e.key === 'Enter') {
+      if (unlocked) setShowMenu(!showMenu);
+      else if (available) onClick();
+    }
+  };
 
   const handleClick = (e: React.MouseEvent) => {
     if (unlocked) {
@@ -72,7 +92,9 @@ export function DetailedPerkNode({
       whileHover={{ scale: (available || unlocked) ? 1.1 : 1 }}
       whileTap={{ scale: (available || unlocked) ? 0.95 : 1 }}
       onClick={handleClick}
-        onContextMenu={handleContext}
+      onContextMenu={handleContext}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
     >
