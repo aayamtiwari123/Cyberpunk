@@ -1189,8 +1189,8 @@
             </div>
           </div>
 
-          <div className="relative z-10 w-full px-4 py-6 max-w-1400 mx-auto" style={{ maxWidth: '1400px' }}>
-            <div className="relative bg-black-30 border border-cyan-500-10 rounded-lg p-6 overflow-hidden" style={{ height: '700px', transform: 'scale(0.8)', transformOrigin: 'top left', width: '1750px', height: '875px' }}>
+          <div className="relative z-10 w-full px-4 py-6 max-w-1400 mx-auto overflow-visible" style={{ maxWidth: '1400px' }}>
+            <div className="relative bg-black-30 border border-cyan-500-10 rounded-lg p-6 overflow-visible" style={{ height: '700px', transform: 'scale(0.8)', transformOrigin: 'top left', width: '1750px', height: '875px' }}>
               <svg className="absolute inset-0 w-full h-full pointer-events-none">
                 {categoryConnections.map(({ from, to }, index) => {
                   const fromPerk = category.perks.find(p => p.id === from);
