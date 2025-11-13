@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { Lock, Check, BookOpen, LockKeyhole } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { perkMastery } from '../data/perkMastery';
 
 interface DetailedPerkNodeProps {
@@ -15,6 +16,7 @@ interface DetailedPerkNodeProps {
   onClick: () => void;
   onLockToggle: () => void;
   side?: 'left' | 'right';
+  onDetailsChange?: (open: boolean) => void;
 }
 
 export function DetailedPerkNode({
@@ -35,6 +37,13 @@ export function DetailedPerkNode({
   const [showDetails, setShowDetails] = useState(false);
 
   const detailInfo = perkMastery[id];
+
+  // Notify parent when details open/close
+  useEffect(() => {
+    if (typeof (onDetailsChange as any) === 'function') {
+      (onDetailsChange as (open: boolean) => void)(showDetails);
+    }
+  }, [showDetails, /* onDetailsChange intentionally not in deps to avoid re-calls */]);
 
   // Close modal on Escape
   useEffect(() => {
@@ -233,8 +242,8 @@ export function DetailedPerkNode({
         </motion.div>
       )}
 
-      {/* Details Modal (right-click) */}
-      {showDetails && (
+      {/* Details Modal (right-click) rendered via portal so parent blur won't affect it */}
+      {showDetails && createPortal(
         <div className="fixed inset-0 z-60 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowDetails(false)} />
           <div className="relative bg-gray-900/95 border border-cyan-500/40 rounded-lg p-4 max-w-lg w-[min(90%,560px)] z-70">
@@ -257,7 +266,8 @@ export function DetailedPerkNode({
               <div className="text-sm text-gray-400">No mastery estimate available for this perk.</div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </motion.div>
   );
