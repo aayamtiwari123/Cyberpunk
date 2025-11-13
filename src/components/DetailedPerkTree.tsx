@@ -232,7 +232,7 @@ export function DetailedPerkTree({ category, onBack, initialUnlockedPerks, onPer
 
       {/* Perk Tree Canvas */}
       <div className="relative z-10 w-full px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
-          <div className="relative bg-black/20 border border-cyan-500/10 rounded-lg p-6 pr-64 pb-48 overflow-auto" style={{ height: '700px' }}>
+          <div className="relative bg-black/20 border border-cyan-500/10 rounded-lg p-6 pr-64 pb-64 mb-8 overflow-auto" style={{ height: '700px' }}>
           {/* Connection lines */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none">
             {categoryConnections.map(({ from, to }, index) => {
@@ -313,7 +313,7 @@ export function DetailedPerkTree({ category, onBack, initialUnlockedPerks, onPer
         </AnimatePresence>
 
         {/* Legendary preview */}
-        <div className="mt-6 bg-black/30 border border-yellow-500/20 rounded-lg p-4 backdrop-blur-sm">
+        <div className="mt-12 bg-black/30 border border-yellow-500/20 rounded-lg p-4 backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-3">
             <Award className="w-6 h-6 text-yellow-500" />
             <h3 className="text-yellow-500 tracking-wider">Legendary Unlock</h3>
