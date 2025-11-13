@@ -209,7 +209,7 @@ export function DetailedPerkNode({
         <motion.div
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="absolute top-1/2 -translate-y-1/2 right-full mr-3 bg-gray-900/95 border border-cyan-500/50 rounded p-2.5 w-64 z-50 backdrop-blur-sm"
+          className={`absolute top-1/2 -translate-y-1/2 ${side === 'left' ? 'left-full ml-3' : 'right-full mr-3'} bg-gray-900/95 border border-cyan-500/50 rounded p-2.5 w-64 z-50 backdrop-blur-sm`}
         >
           <div className={`text-xs ${unlocked ? (locked ? 'text-yellow-400' : 'text-cyan-400') : 'text-cyan-400'}`}>
             {name}

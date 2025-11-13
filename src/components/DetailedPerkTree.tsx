@@ -232,7 +232,7 @@ export function DetailedPerkTree({ category, onBack, initialUnlockedPerks, onPer
 
       {/* Perk Tree Canvas */}
       <div className="relative z-10 w-full px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
-        <div className="relative bg-black/20 border border-cyan-500/10 rounded-lg p-6 overflow-auto" style={{ height: '700px' }}>
+          <div className="relative bg-black/20 border border-cyan-500/10 rounded-lg p-6 pr-40 pb-24 overflow-auto" style={{ height: '700px' }}>
           {/* Connection lines */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none">
             {categoryConnections.map(({ from, to }, index) => {
