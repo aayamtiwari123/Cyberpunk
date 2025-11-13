@@ -1,18 +1,52 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { CategorySelection } from './components/CategorySelection';
 import { DetailedPerkTree } from './components/DetailedPerkTree';
 import { categories } from './data/perkData';
 
-export default function App() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [categoryProgress, setCategoryProgress] = useState<Record<string, Set<string>>>({
+// Helper functions for localStorage
+const loadProgress = (): Record<string, Set<string>> => {
+  try {
+    const stored = localStorage.getItem('perkProgress');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return Object.entries(parsed).reduce((acc, [key, value]) => ({
+        ...acc,
+        [key]: new Set(value as string[])
+      }), {});
+    }
+  } catch (e) {
+    console.error('Failed to load progress:', e);
+  }
+  return {
     technical: new Set(),
     matter: new Set(),
     intelligence: new Set(),
     cool: new Set(),
     body: new Set(),
     relic: new Set()
-  });
+  };
+};
+
+const saveProgress = (progress: Record<string, Set<string>>) => {
+  try {
+    const serialized = Object.entries(progress).reduce((acc, [key, value]) => ({
+      ...acc,
+      [key]: Array.from(value)
+    }), {});
+    localStorage.setItem('perkProgress', JSON.stringify(serialized));
+  } catch (e) {
+    console.error('Failed to save progress:', e);
+  }
+};
+
+export default function App() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categoryProgress, setCategoryProgress] = useState<Record<string, Set<string>>>(loadProgress);
+
+  // Save progress to localStorage whenever it changes
+  useEffect(() => {
+    saveProgress(categoryProgress);
+  }, [categoryProgress]);
 
   const characterLevel = useMemo(() => {
     let totalUnlocked = 0;
