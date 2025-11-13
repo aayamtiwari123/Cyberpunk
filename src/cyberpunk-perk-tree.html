@@ -889,8 +889,6 @@
       onLockToggle,
       side = 'right'
     }) {
-      // Determine whether tooltip/menu should be displayed above the node
-      const tooltipAbove = position && typeof position.y === 'number' ? position.y < 150 : false;
       const [showTooltip, setShowTooltip] = useState(false);
       const [showMenu, setShowMenu] = useState(false);
 
@@ -1029,13 +1027,10 @@
 
           {showTooltip && !showMenu && (
             <motion.div
-              initial={{ opacity: 0, x: 10 }}
+              initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               className="absolute bg-gray-900-95 border border-cyan-500-50 rounded p-2 w-64 z-50 backdrop-blur-sm"
-              style={ tooltipAbove
-                ? { bottom: '100%', left: '50%', transform: 'translate(-50%, -0.5rem)' }
-                : { top: '100%', left: '50%', transform: 'translate(-50%, 0.5rem)' }
-              }
+              style={{ top: '50%', right: '100%', transform: 'translate(0, -50%)', marginRight: '0.75rem' }}
             >
               <div className={`text-xs ${unlocked ? (locked ? 'text-yellow-400' : 'text-cyan-400') : 'text-cyan-400'}`}>
                 {name}
